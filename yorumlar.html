@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yorumlar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    #yorum-formu {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 80%;
+      height: 80px;
+      resize: none;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ff3e3e;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #yorumlar {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .yorum {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 5px solid #ff3e3e;
+      box-shadow: 0 0 5px #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Yorumlar</h2>
+
+  <div id="yorum-formu">
+    <textarea id="yorumMetni" placeholder="Yorumunuzu yazın..."></textarea><br>
+    <button onclick="yorumEkle()">Gönder</button>
+  </div>
+
+  <div id="yorumlar"></div>
+
+  <script>
+    function yorumEkle() {
+      let metin = document.getElementById("yorumMetni").value;
+      if (metin.trim() === "") return;
+
+      let yeniYorum = document.createElement("div");
+      yeniYorum.className = "yorum";
+      yeniYorum.textContent = metin;
+
+      document.getElementById("yorumlar").prepend(yeniYorum);
+      document.getElementById("yorumMetni").value = "";
+    }
+  </script>
+
+</body>
+</html>
