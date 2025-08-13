@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>BİR DÜNYA MENÜ</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            overflow-x: hidden;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px;
+        }
+        .nav-links a {
+            padding: 25px 35px;
+            background-color: #0033cc;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 40px 10px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .nav-links a:hover {
+            background-color: #0040ff;
+        }
+        .section-title {
+            text-align: center;
+            margin: 50px 0 30px 0;
+        }
+        .section-title h1 {
+            border-bottom: 3px solid #0033cc;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        .item-container {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s;
+        }
+        .dark-mode .item-container {
+            background-color: #1e1e1e;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .item-container:hover {
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
+        }
+        .item-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .item-container.left {
+            flex-direction: row;
+        }
+        .item-container.right {
+            flex-direction: row-reverse;
+        }
+        .item-image {
+            width: 300px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .item-details {
+            flex-grow: 1;
+            margin-left: 30px;
+            margin-right: 30px;
+            text-align: left;
+        }
+        .item-details h1, .item-details h2 {
+            margin: 0 0 10px 0;
+        }
+        .item-details h1 {
+            font-size: 28px;
+            color: #0033cc;
+        }
+        .dark-mode .item-details h1 {
+            color: #6699ff;
+        }
+        .item-details h2 {
+            font-size: 18px;
+            color: #555;
+        }
+        .dark-mode .item-details h2 {
+            color: #ccc;
+        }
+        hr {
+            border: 1px solid #ccc;
+            margin: 40px 0;
+        }
+        .dark-mode hr {
+            border-color: #444;
+        }
+        .sponsor-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+        .sponsor-section img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Tema Değiştirme Butonu */
+        .theme-switch-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 100px; /* Daha büyük genişlik */
+            height: 57px; /* Daha büyük yükseklik */
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 57px; /* Yüksekliğe göre yuvarlak */
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 48px; /* Daha büyük top */
+            width: 48px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(43px); /* Daha büyük top için kaydırma mesafesi */
+        }
+        .theme-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px; /* Daha büyük ikonlar */
+            height: 30px;
+            transition: opacity 0.4s;
+        }
+        #light-icon {
+            left: 8px; /* İkon pozisyonunu ayarla */
+            opacity: 1;
+        }
+        #dark-icon {
+            right: 8px; /* İkon pozisyonunu ayarla */
+            opacity: 0;
+        }
+        input:checked ~ #light-icon {
+            opacity: 0;
+        }
+        input:checked ~ #dark-icon {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://i.supaimg.com/c1cf2ef6-d309-4d22-ae81-f6fe5cec695a.png" alt="Logo" />
+            <br>
+            <br>
+            <img src="https://i.supaimg.com/c77d62ba-157e-4d4e-afc0-3700fd9d3496.png" alt="Başlık" />
+        </div>
+        
+        <br>
+        <hr>
+        
+        <div class="nav-links">
+            <a href="bilgi.html"><h2>SİPARİŞ SAYFASI</h2></a>
+            <a href="index.html"><h2>ANA MENÜ</h2></a>
+            <a href="bilgi.html"><h2>İNDİRİM VE KAMPANYA</h2></a>
+        </div>
+        
+        <div class="theme-switch-container">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <span class="slider"></span>
+                <img id="light-icon" class="theme-icon" src="https://www.svgrepo.com/show/367332/sun.svg" alt="Açık Tema">
+                <img id="icon-dark" class="theme-icon" src="https://www.svgrepo.com/show/367341/moon.svg" alt="Karanlık Tema">
+            </label>
+        </div>
+
+        <div class="section-title">
+            <h1>
+                Menümüzde en başta dürümler,altında porsiyonlar,onun altında içecekler, içeceklerin altında tatlılar bulunuyor...
+            </h1>
+        </div>
+        
+        <hr>
+        
+        <div class="section-title">
+            <h1>DÜRÜMLER</h1>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/156aad00-4cb6-4575-a7fb-85b12eb6e188.jpg" alt="Öğrenci Dürüm" class="item-image" />
+            <div class="item-details">
+                <h1>ÖĞRENCİ DÜRÜM</h1>
+                <h2>130 Gr çiğköfte</h2>
+                <h2>acı sos</h2>
+                <h2>nar ekşisi</h2>
+                <h2>marul-domates-salatalık</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/156aad00-4cb6-4575-a7fb-85b12eb6e188.jpg" alt="Mega Dürüm" class="item-image" />
+            <div class="item-details">
+                <h1>MEGA DÜRÜM</h1>
+                <h2>250 Gr ÇİĞKÖFTE</h2>
+                <h2>MARUL-SALATALIK-DOMATES</h2>
+                <h2>acı sos</h2>
+                <h2>nar ekşisi</h2>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="section-title">
+            <h1>PORSİYONLAR</h1>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/e26ef0ef-be76-4786-8df9-c193e4c5f809.jpg" alt="1 Kiloluk Porsiyon" class="item-image" />
+            <div class="item-details">
+                <h1>1 KİLOLUK</h1>
+                <h2>1000 Gr çiğköfte</h2>
+                <h2>FİYAT: 150₺</h2>
+                <h2>12 adet ekmek</h2>
+                <h2>1 göbek marul</h2>
+                <h2>salatalık, domates</h2>
+                <h2>acı sos</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/e26ef0ef-be76-4786-8df9-c193e4c5f809.jpg" alt="Yarım Kiloluk Porsiyon" class="item-image" />
+            <div class="item-details">
+                <h1>YARIM KİLOLUK</h1>
+                <h2>FİYAT: 75₺</h2>
+                <h2>1000 Gr çiğköfte</h2>
+                <h2>MARUL-SALATALIK-DOMATES</h2>
+                <h2>ACI SOS</h2>
+                <h2>8 adet ekmek</h2>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="section-title">
+            <h1>İÇECEKLER</h1>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.ibb.co/0ySGJK67/IMG-20250725-WA0016.jpg" alt="Su" class="item-image">
+            <div class="item-details">
+                <h1>SU</h1>
+                <h2>MARKA: SERSU</h2>
+                <h2>FİYAT: 5₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>500 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/2330eea2-847a-468f-b1ae-716a092756aa.jpg" alt="Ayran" class="item-image" />
+            <div class="item-details">
+                <h1>AYRAN</h1>
+                <h2>MARKA: İÇİM</h2>
+                <h2>FİYAT: 10₺</h2>
+                <h2>AÇIKLAMA: TAZE VE SOĞUK</h2>
+                <h2>170ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.ibb.co/ZRNDnCDX/IMG-20250725-WA0025.jpg" alt="Şalgam" class="item-image">
+            <div class="item-details">
+                <h1>ŞALGAM</h1>
+                <h2>MARKA: YENİ KAVAKLIDERE</h2>
+                <h2>FİYAT: 15₺</h2>
+                <h2>AÇIKLAMA: SOĞUK, TARİHİ UZUN VE ACILI</h2>
+                <h2>300 ml</h2>
+            </div>
+        </div>
+        
+        <div class="sponsor-section">
+            <img src="https://i.ibb.co/h1RNdMLN/MARKANIZI-BURADA-G-RMEK-STERM-S-N-Z-20250728-154813-0000.png" alt="Sponsorluk" border="0">
+            <h2>SPONSORLUK ANLAŞMALARI İÇİN</h2>
+            <a href="adres.html"><h2>İLETİŞİM SAYFAMIZ</h2></a>
+        </div>
+
+        <div class="item-container right">
+            <img src="https://i.ibb.co/Lh67dVPv/IMG-20250725-WA0017.jpg" alt="Meyve Suyu (Küçük)" class="item-image">
+            <div class="item-details">
+                <h1>MEYVE SUYU (KÜÇÜK)</h1>
+                <h2>MARKA: TROPİX</h2>
+                <h2>FİYAT: 7.5₺</h2>
+                <h2>ŞEFTALİ VE VİŞNE</h2>
+                <h2>AÇIKLAMA: UZUN TARİHLİ VE UYGUN</h2>
+                <h2>200 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.ibb.co/BKYW5NR6/IMG-20250725-WA0022.jpg" alt="Sade Maden Suyu" class="item-image">
+            <div class="item-details">
+                <h1>SADE MADEN SUYU</h1>
+                <h2>MARKA: SARIKIZ</h2>
+                <h2>FİYAT: 15₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>250 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/df7f6ae7-e31b-4671-8aef-51aba111c9b5.jpg" alt="Limonlu Maden Suyu" class="item-image" />
+            <div class="item-details">
+                <h1>LİMONLU MADEN SUYU</h1>
+                <h2>MARKA: ASPOYA</h2>
+                <h2>FİYAT: 15₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>200ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.ibb.co/sxhmNTq/IMG-20250725-WA0030.jpg" alt="Sarıyer Kola" class="item-image">
+            <div class="item-details">
+                <h1>KOLA</h1>
+                <h2>MARKA: SARIYER</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>330 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.ibb.co/4gnkHYd2/IMG-20250725-WA0018.jpg" alt="Pepsi Kola" class="item-image">
+            <div class="item-details">
+                <h1>KOLA</h1>
+                <h2>MARKA: PEPSİ</h2>
+                <h2>FİYAT: 30₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>330 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.ibb.co/pjNLn69J/IMG-20250725-WA0021.jpg" alt="Fresh Mix Kola, Limonata" class="item-image">
+            <div class="item-details">
+                <h1>KOLA, LİMONATA</h1>
+                <h2>MARKA: FRESH MİX</h2>
+                <h2>KOLA, PORTAKAL, LİMONATA</h2>
+                <h2>FİYAT: 10₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>250 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/88db2568-7442-4a4b-a768-1c34448d5a45.jpg" alt="Fresh Mix Karışık Aromalı" class="item-image" />
+            <div class="item-details">
+                <h1>KARIŞIK AROMALI GAZLI İÇECEK</h1>
+                <h2>MARKA: FRESH MİX</h2>
+                <h2>FİYAT: 10₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>250ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/bcfbf52f-83c3-4a9f-ba7b-85f46b09db66.jpg" alt="Go Up Enerji İçeceği" class="item-image" />
+            <div class="item-details">
+                <h1>ENERJİ İÇECEĞİ</h1>
+                <h2>MARKA: GO UP</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>250 ml</h2>
+            </div>
+        </div>
+        
+        <div class="sponsor-section">
+            <img src="https://i.ibb.co/h1RNdMLN/MARKANIZI-BURADA-G-RMEK-STERM-S-N-Z-20250728-154813-0000.png" alt="Sponsorluk" border="0">
+            <h2>SPONSORLUK ANLAŞMASI İÇİN</h2>
+            <a href="adres.html"><h2>İLETİŞİM SAYFAMIZ</h2></a>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/54138c2d-25e5-4925-8918-d9069796d87a.jpg" alt="Diriliş Enerji İçeceği" class="item-image" />
+            <div class="item-details">
+                <h1>ENERJİ İÇECEĞİ</h1>
+                <h2>MARKA: DİRİLİŞ</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>AÇIKLAMA: SOĞUK VE UZUN TARİHLİ</h2>
+                <h2>250ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/b8e56096-ec24-4d58-b90e-eacc3fadc075.jpg" alt="Juss Teneke Meyve Suları" class="item-image" />
+            <div class="item-details">
+                <h1>TENEKE MEYVE SULARI</h1>
+                <h2>MARKA: JUSS</h2>
+                <h2>LİMONLU SOĞUK ÇAY: 25₺</h2>
+                <h2>KARPUZ ÇİLEK SOĞUK ÇAY: 25₺</h2>
+                <h2>VİŞNELİ MEYVE SUYU: 25₺</h2>
+                <h2>KARIŞIK MEYVE SUYU: 25₺</h2>
+                <h2>250 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/a08cf025-85d4-42a3-8c6d-5804d4b4fec0.jpg" alt="Lipton Karpuz Nane Soğuk Çay" class="item-image" />
+            <div class="item-details">
+                <h1>SOĞUK ÇAY</h1>
+                <h2>MARKA: LİPTON</h2>
+                <h2>FİYAT: 30₺</h2>
+                <h2>AÇIKLAMA: SOĞUK, UZUN TARİHLİ VE KARPUZ, NANE AROMALI</h2>
+                <h2>330 ml</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/9c1a1a37-4020-4a8c-8ddd-b4808d16a368.jpg" alt="Lipton Yeşil Çay Soğuk Çay" class="item-image" />
+            <div class="item-details">
+                <h1>SOĞUK ÇAY</h1>
+                <h2>MARKA: LİPTON</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>AÇIKLAMA: SOĞUK, UZUN TARİHLİ YEŞİL ÇAY VE ÇİLEK AROMALI</h2>
+                <h2>250ml</h2>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="section-title">
+            <h1>TATLILAR</h1>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/75c6f72d-deb5-4216-820f-c5aabcf474c8.jpg" alt="Dondurma" class="item-image" />
+            <div class="item-details">
+                <h1>DONDURMA</h1>
+                <h2>TOP FİYATI: 15₺</h2>
+                <h2>karamel - antep fıstığı - çilek</h2>
+                <h2>vanilya - kakao - limon - vişne</h2>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="section-title">
+            <h1>CİPSLER</h1>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/926e557b-d19d-4a8c-9bc0-c03980e2839c.jpg" alt="Chips Master Patates Cipsi" class="item-image" />
+            <div class="item-details">
+                <h1>PATATES CİPSİ</h1>
+                <h2>MARKA: CHİPS MASTER</h2>
+                <h2>FİYAT: 60₺</h2>
+                <h2>❗Dürüm içine eklenebilir❗</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/28b59f7c-43e2-430d-b0e5-1b0308d310e3.jpg" alt="Patos Acı Baharatlı Cips" class="item-image" />
+            <div class="item-details">
+                <h1>ACI BAHARATLI MISIR CİPSİ</h1>
+                <h2>MARKA: PATOS</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>❗Dürüm içine eklenebilir❗</h2>
+            </div>
+        </div>
+        
+        <div class="sponsor-section">
+            <img src="https://i.ibb.co/h1RNdMLN/MARKANIZI-BURADA-G-RMEK-STERM-S-N-Z-20250728-154813-0000.png" alt="Sponsorluk" border="0">
+            <h2>SPONSORLUK ANLAŞMALARI İÇİN</h2>
+            <a href="adres.html"><h2>İLETİŞİM SAYFAMIZ</h2></a>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/ac754d7f-878b-49f0-9b98-ee4010d51bef.jpg" alt="Patos Extra Acı Cips" class="item-image" />
+            <div class="item-details">
+                <h1>EXTRA ACI BAHARATLI MISIR CİPSİ</h1>
+                <h2>MARKA: PATOS</h2>
+                <h2>FİYAT: 25₺</h2>
+                <h2>❗Dürüm içine eklenebilir❗</h2>
+            </div>
+        </div>
+        
+        <div class="item-container right">
+            <img src="https://i.supaimg.com/4e53d3ba-97f0-4df9-b360-bd6196b6287b.jpg" alt="Patos Atom Cips" class="item-image" />
+            <div class="item-details">
+                <h1>TEK ATIMLIK ATOM CİPS</h1>
+                <h2>MARKA: PATOS</h2>
+                <h2>FİYAT: 15₺</h2>
+                <h2>❗Dürüm içine eklenebilir❗</h2>
+            </div>
+        </div>
+        
+        <div class="item-container left">
+            <img src="https://i.supaimg.com/d12e8972-0d32-4d87-9a13-8292718d1abd.jpg" alt="Patos X Atom Cips" class="item-image" />
+            <div class="item-details">
+                <h1>TEK ATIMLIK X ATOM MISIR CİPSİ</h1>
+                <h2>MARKA: PATOS</h2>
+                <h2>FİYAT: 15₺</h2>
+                <h2>❗Dürüm içine eklenebilir❗</h2>
+            </div>
+        </div>
+
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const items = document.querySelectorAll('.item-container');
+            const themeSwitch = document.getElementById('checkbox');
+            
+            // Tema ayarını tarayıcıdan yükle
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeSwitch.checked = true;
+            }
+
+            // Tema değiştirme butonuna işlevsellik ekle
+            themeSwitch.addEventListener('change', function(event) {
+                if (event.target.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            function checkVisibility() {
+                items.forEach(item => {
+                    const itemPosition = item.getBoundingClientRect().top;
+                    const screenHeight = window.innerHeight;
+
+                    if (itemPosition < screenHeight - 150) {
+                        item.classList.add('visible');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', checkVisibility);
+            window.addEventListener('resize', checkVisibility);
+
+            checkVisibility();
+        });
+    </script>
+</body>
+</html>
